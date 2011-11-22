@@ -1,0 +1,39 @@
+<project>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.deftlabs</groupId>
+    <artifactId>mongo-java-tailable-cursor</artifactId>
+    <packaging>jar</packaging>
+    <name>Mongo Java Tailable Cursor</name>
+    <version>@VERSION@</version>
+    <description>An extension to the MongoDB Java driver that supports a blocking tailable cursor.</description>
+    <url>https://deftlabs.com</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/deftlabs</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>[2.6,)</version>
+        </dependency>
+    </dependencies>
+
+    <developers>
+        <developer>
+            <name>Ryan Nitz</name>
+            <organization>Deft Labs</organization>
+        </developer>
+    </developers>
+
+</project>
