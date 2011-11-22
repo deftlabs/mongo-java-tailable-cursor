@@ -17,9 +17,10 @@
 package com.deftlabs.cursor.mongo;
 
 /**
- * The distributed lock interface.
+ * The tailable cursor object.
  */
-public interface TailableCursor {
+public class TailableCursor {
+
 
 }
 
