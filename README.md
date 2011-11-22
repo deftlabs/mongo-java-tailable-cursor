@@ -1,11 +1,11 @@
 
-mongo-java-distributed-lock
+mongo-java-tailable-cursor
 =============
 
 About
 ------------
 
-An extension to the [MongoDB](http://www.mongodb.org/) Java driver that supports a blocking [tailable cursor](http://www.mongodb.org/display/DOCS/Tailable+Cursors).
+An extension to the [MongoDB](http://www.mongodb.org/) Java driver that supports a blocking and event based tailable cursor [tailable cursor](http://www.mongodb.org/display/DOCS/Tailable+Cursors).
 
 This library is currently under new development. It is not yet ready for use in any environment.
 
