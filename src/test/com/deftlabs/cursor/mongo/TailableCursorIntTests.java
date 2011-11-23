@@ -16,6 +16,9 @@
 
 package com.deftlabs.cursor.mongo;
 
+// Lib
+import com.deftlabs.cursor.mongo.TailableCursorImpl;
+
 // Mongo
 import com.mongodb.Mongo;
 import com.mongodb.MongoURI;
@@ -38,8 +41,16 @@ import java.util.concurrent.TimeUnit;
 public final class TailableCursorIntTests {
 
     @Test
-    public void testPlaceholder() throws Exception {
+    public void testSimpleStartStop() throws Exception {
 
+        final TailableCursorOptions options
+        = new TailableCursorOptions("mongodb://127.0.0.1:27017", "com_deftlabs_cursor_mongo_tailableCursorTest", "test");
+
+        final TailableCursor tailableCursor = new TailableCursorImpl(options);
+
+        tailableCursor.start();
+
+        tailableCursor.stop();
     }
 
     @Before
