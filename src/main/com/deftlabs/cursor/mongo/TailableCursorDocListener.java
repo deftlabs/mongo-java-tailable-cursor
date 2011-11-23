@@ -19,33 +19,19 @@ package com.deftlabs.cursor.mongo;
 // Mongo
 import com.mongodb.DBObject;
 
+// Java
+import java.util.EventListener;
+
 /**
- * The tailable cursor interface.
+ * The tailable cursor doc listener interface. Used for the
+ * event base notification modle.
  */
-public interface TailableCursor {
+public interface TailableCursorDocListener extends EventListener {
 
     /**
-     * Returns the next object in the cursor. This call blocks until an object
-     * is available.
-     * @throws InterruptedException
+     * Called when a document is pulled from the tailable cursor.
      */
-    public DBObject nextDoc() throws InterruptedException;
-
-    /**
-     * Called to start the tailable cursor.
-     */
-    public void start();
-
-    /**
-     * Called to stop the tailable cursor. This causes an Interrupted exception to
-     * be thrown in the nextDoc method.
-     */
-    public void stop();
-
-    /**
-     * Returns true if start has been called and is running properly.
-     */
-    public boolean isRunning();
+    public void onDoc(final DBObject pDoc);
 
 }
 
