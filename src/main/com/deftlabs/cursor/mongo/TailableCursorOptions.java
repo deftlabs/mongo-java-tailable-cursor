@@ -52,6 +52,11 @@ public class TailableCursorOptions {
      */
     public long getDefaultCappedCollectionSize() { return _defaultCappedCollectionSize; }
 
+
+    public void setDocListener(final TailableCursorDocListener pV) { _docListener = pV; }
+    public TailableCursorDocListener getDocListener() { return _docListener; }
+    public boolean hasDocListener() { return _docListener != null; }
+
     public String getDatabaseName() { return _databaseName; }
     public String getCollectionName() { return _collectionName; }
 
@@ -67,6 +72,7 @@ public class TailableCursorOptions {
     private final String _mongoUri;
     private final String _databaseName;
     private final String _collectionName;
+    private TailableCursorDocListener _docListener;
 
     /**
      * The only required params are the uri, database and collection names.

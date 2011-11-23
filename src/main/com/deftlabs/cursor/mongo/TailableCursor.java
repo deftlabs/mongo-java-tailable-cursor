@@ -19,33 +19,36 @@ package com.deftlabs.cursor.mongo;
 // Mongo
 import com.mongodb.DBObject;
 
+// Java
+import java.util.List;
+
 /**
  * The tailable cursor interface.
  */
-public interface TailableCursor {
+public abstract class TailableCursor {
 
     /**
      * Returns the next object in the cursor. This call blocks until an object
-     * is available.
+     * is available. This method should not be used in conjunction with TailableCursorDocListener.
+     * If the doc listener is set and this method is called, an exception will be thrown.
      * @throws InterruptedException
      */
-    public DBObject nextDoc() throws InterruptedException;
+    public abstract DBObject nextDoc() throws InterruptedException;
 
     /**
      * Called to start the tailable cursor.
      */
-    public void start();
+    public abstract void start();
 
     /**
      * Called to stop the tailable cursor. This causes an Interrupted exception to
      * be thrown in the nextDoc method.
      */
-    public void stop();
+    public abstract void stop();
 
     /**
      * Returns true if start has been called and is running properly.
      */
-    public boolean isRunning();
-
+    public abstract boolean isRunning();
 }
 

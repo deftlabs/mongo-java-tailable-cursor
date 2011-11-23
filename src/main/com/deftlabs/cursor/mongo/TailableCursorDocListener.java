@@ -31,7 +31,7 @@ public interface TailableCursorDocListener extends EventListener {
     /**
      * Called when a document is pulled from the tailable cursor.
      */
-    public void onDoc(final DBObject pDoc);
+    public void nextDoc(final DBObject pDoc);
 
 }
 

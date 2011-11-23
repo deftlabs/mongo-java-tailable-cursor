@@ -31,6 +31,8 @@ import com.mongodb.MongoURI;
 
 // Java
 import java.util.Queue;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.UnknownHostException;
@@ -42,7 +44,7 @@ import java.util.concurrent.locks.LockSupport;
 /**
  * The tailable cursor interface.
  */
-public class TailableCursorImpl implements TailableCursor {
+public class TailableCursorImpl extends TailableCursor {
 
     /**
      * Returns the next object in the cursor. This call blocks until an object
@@ -51,6 +53,9 @@ public class TailableCursorImpl implements TailableCursor {
      */
     @Override
     public DBObject nextDoc() throws InterruptedException {
+        if (_options.hasDocListener())
+        { throw new TailableCursorException("Can't use doc listener and nextDoc together"); }
+
         DBObject doc = null;
 
         while (true) {
@@ -70,13 +75,12 @@ public class TailableCursorImpl implements TailableCursor {
         while (_waiters.peek() != current || !_locked.compareAndSet(false, true)) {
             LockSupport.park();
 
-            // Ignore interrupts while waiting
+            // If interrupted, get out of here
             if (Thread.interrupted()) { wasInterrupted = true; break; }
         }
 
         _waiters.remove();
 
-        // Reassert interrupt status on exit
         if (wasInterrupted) { current.interrupt(); throw new InterruptedException(); }
     }
 
@@ -120,17 +124,18 @@ public class TailableCursorImpl implements TailableCursor {
                     try {
                         while (cur.hasNext() && _running.get()) {
                             final DBObject doc = cur.next();
+
                             if (doc == null) break;
 
-                            _docQueue.put(doc);
-                            unlock();
+                            if (_options.hasDocListener()) { _options.getDocListener().nextDoc(doc);
+                            } else { _docQueue.put(doc); unlock(); }
                         }
                     } finally {
                         try { if (cur != null) cur.close(); } catch (final Throwable t) { /* nada */ }
-                        _mongo.getDB(_options.getDatabaseName()).requestDone();
+                        try { _mongo.getDB(_options.getDatabaseName()).requestDone(); } catch (final Throwable t) { /* nada */ }
                     }
 
-                    Thread.sleep(_options.getNoDocSleepTime());
+                    if (_options.getNoDocSleepTime() > 0) Thread.sleep(_options.getNoDocSleepTime());
 
                 } catch (final InterruptedException ie) { break;
                 } catch (final Throwable t) { if (handleException(t)) break; }
