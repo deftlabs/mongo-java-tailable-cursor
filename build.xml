@@ -174,7 +174,7 @@ limitations under the License.
 
     <target name="test-thread" depends="compile">
 
-        <java classname="com.deftlabs.lock.mongo.StandaloneThreadLockTests">
+        <java classname="com.deftlabs.cursor.mongo.StandaloneTailableCursorTests">
             <arg value="-Duser.timezone=GMT"/>
             <arg value="-Dfile.encoding=UTF-8"/>
             <classpath refid="classpath.all"/>
