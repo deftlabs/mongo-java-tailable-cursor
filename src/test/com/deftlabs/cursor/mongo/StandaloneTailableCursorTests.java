@@ -31,7 +31,6 @@ import static org.junit.Assert.*;
 
 // Java
 import java.util.Date;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
 

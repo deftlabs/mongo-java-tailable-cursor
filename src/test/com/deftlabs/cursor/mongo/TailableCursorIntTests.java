@@ -21,7 +21,9 @@ import com.deftlabs.cursor.mongo.TailableCursorImpl;
 
 // Mongo
 import com.mongodb.Mongo;
+import com.mongodb.DB;
 import com.mongodb.MongoURI;
+import com.mongodb.DBObject;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 
@@ -41,28 +43,36 @@ import java.util.concurrent.TimeUnit;
 public final class TailableCursorIntTests {
 
     @Test
-    public void testSimpleStartStop() throws Exception {
+    public void testSimple() throws Exception {
+        getDb().dropDatabase();
 
         final TailableCursorOptions options
         = new TailableCursorOptions("mongodb://127.0.0.1:27017", "com_deftlabs_cursor_mongo_tailableCursorTest", "test");
+        options.setDefaultCappedCollectionSize(10485760);
 
         final TailableCursor tailableCursor = new TailableCursorImpl(options);
 
-        tailableCursor.start();
+        for (int idx=0; idx < 20; idx++) getCollection().insert(new BasicDBObject());
 
-        tailableCursor.stop();
+        try {
+            tailableCursor.start();
+
+            for (int idx=0; idx < 20; idx++) assertNotNull(tailableCursor.nextDoc());
+
+        } finally { tailableCursor.stop(); }
     }
 
     @Before
     public void init() throws Exception {
-
+        _mongo = new Mongo(new MongoURI("mongodb://127.0.0.1:27017"));
     }
 
-    @After
-    public void cleanup() {
+    private DB getDb()
+    { return _mongo.getDB("com_deftlabs_cursor_mongo_tailableCursorTest"); }
 
-    }
+    private DBCollection getCollection()
+    { return _mongo.getDB("com_deftlabs_cursor_mongo_tailableCursorTest").getCollection("test"); }
 
-
+    private Mongo _mongo;
 }
 
