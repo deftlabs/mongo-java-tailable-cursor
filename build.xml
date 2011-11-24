@@ -195,8 +195,7 @@ limitations under the License.
         <delete dir="${dir.build}/javadocs/"/>
 
         <javadoc
-            packagenames="com.deftlabs.lock.mongo"
-            excludepackagenames="com.deftlabs.lock.mongo.impl"
+            packagenames="com.deftlabs.cursor.mongo"
             sourcepath="src/main/"
             defaultexcludes="yes"
             destdir="${dir.build}/javadocs"
