@@ -28,6 +28,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoURI;
+import com.mongodb.MongoException;
 
 // Java
 import java.util.Queue;
@@ -122,7 +123,7 @@ public class TailableCursorImpl extends TailableCursor {
                     _mongo.getDB(_options.getDatabaseName()).requestStart();
                     final DBCursor cur = createCursor();
                     try {
-                        while (cur.hasNext() && _running.get()) {
+                        while (_running.get() && cur.hasNext()) {
                             final DBObject doc = cur.next();
 
                             if (doc == null) break;
@@ -137,6 +138,8 @@ public class TailableCursorImpl extends TailableCursor {
 
                     if (_options.getNoDocSleepTime() > 0) Thread.sleep(_options.getNoDocSleepTime());
 
+                } catch (final MongoException.CursorNotFound cnf) {
+                    if (_running.get()) if (handleException(cnf)) break;
                 } catch (final InterruptedException ie) { break;
                 } catch (final Throwable t) { if (handleException(t)) break; }
             }
