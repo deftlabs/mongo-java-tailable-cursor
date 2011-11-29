@@ -31,8 +31,10 @@ import static org.junit.Assert.*;
 
 // Java
 import java.util.Date;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
-
 
 /**
  * The standalone threaded tailable cursor tests.
@@ -51,34 +53,43 @@ public final class StandaloneTailableCursorTests {
         try {
             tailableCursor.start();
 
-            for (int idx=0; idx < THREAD_COUNT; idx++)
-            { new Thread(new ReadTest(tailableCursor)).start(); }
+            for (int idx=0; idx < THREAD_COUNT; idx++) new Thread(new ReadTest(tailableCursor)).start();
 
-            new Thread(new Writer()).start();
+            final CountDownLatch writerCountDownLatch = new CountDownLatch(1);
 
-            Thread.sleep(10000);
+            new Thread(new Writer(writerCountDownLatch)).start();
 
-            System.out.println("----- read count: " + _readCount.get());
+            writerCountDownLatch.await();
 
-        } finally { tailableCursor.stop(); }
+            if (_readCount.get() != WRITE_COUNT)
+            { throw new IllegalStateException("Counts off - expected: " + WRITE_COUNT + " - actual: " + _readCount.get()); }
 
-        Thread.sleep(10000);
+            //System.out.println("----- read count: " + _readCount.get());
+
+        } finally {
+            tailableCursor.stop();
+            getDb().dropDatabase();
+        }
     }
 
     private class ReadTest implements Runnable {
 
-        private ReadTest(final TailableCursor pTailableCursor) {
-            _tailableCursor = pTailableCursor;
-        }
+        private ReadTest(final TailableCursor pTailableCursor)
+        { _tailableCursor = pTailableCursor; }
 
         @Override
         public void run() {
             while (true) {
                 try {
-
                     final BasicDBObject doc = (BasicDBObject)_tailableCursor.nextDoc();
 
                     if (doc == null) System.out.println("------ yikes - doc is null");
+
+                    final int id = doc.getInt("_id");
+
+                    if (_seenIds.contains(id)) System.out.println("---- doh - contains a duplicate: " + id);
+
+                    _seenIds.add(id);
 
                     _readCount.incrementAndGet();
 
@@ -94,14 +105,23 @@ public final class StandaloneTailableCursorTests {
 
     private class Writer implements Runnable {
 
+        private Writer(final CountDownLatch pWriterCountDownLatch) {
+            _writerCountDownLatch = pWriterCountDownLatch;
+        }
+
        @Override
         public void run() {
-            while (true) {
-                final BasicDBObject doc = new BasicDBObject();
+            for (int idx=0; idx < WRITE_COUNT; idx++) {
+                final BasicDBObject doc = new BasicDBObject("_id", idx);
                 doc.put("ts", new Date());
                 getCollection().insert(doc);
             }
+
+            try { Thread.sleep(2000); } catch (final InterruptedException ie) { throw new IllegalStateException(ie); }
+
+            _writerCountDownLatch.countDown();
         }
+        private final CountDownLatch _writerCountDownLatch;
     }
 
     private DB getDb()
@@ -115,7 +135,11 @@ public final class StandaloneTailableCursorTests {
 
     private static final int THREAD_COUNT = 10;
 
+    private static final int WRITE_COUNT = 100000;
+
     private final AtomicLong _readCount = new AtomicLong(0);
+
+    private final Set<Integer> _seenIds = new HashSet<Integer>();
 
     public static void main(final String [] pArgs) throws Exception {
         final StandaloneTailableCursorTests tests = new StandaloneTailableCursorTests();
@@ -124,6 +148,5 @@ public final class StandaloneTailableCursorTests {
     }
 
     private final Mongo _mongo;
-
 }
 
