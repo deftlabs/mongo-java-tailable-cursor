@@ -21,15 +21,29 @@ package com.deftlabs.cursor.mongo;
  */
 public class TailableCursorException extends RuntimeException {
 
-    private static final long serialVersionUID = -4415279469780082174L;
+
 
     public TailableCursorException() { super(); }
 
     public TailableCursorException(final String pMsg) { super(pMsg); }
 
+    public TailableCursorException(final String pMsg, final String pErrorCode)
+    { super(pMsg); _errorCode = pErrorCode; }
+
     public TailableCursorException(final String pMsg, final Throwable pT) { super(pMsg, pT); }
 
     public TailableCursorException(final Throwable pT) { super(pT); }
+
+    public String getErrorCode() { return _errorCode; }
+
+    public boolean hasErrorCode() { return _errorCode != null; }
+
+    private String _errorCode = null;
+
+    private static final long serialVersionUID = -4415279469780082174L;
+
+    public static final String NON_CAPPED_COLLECTION = "1001";
+    public static final String NO_COLLECTION_FOUND = "1002";
 
 }
 
