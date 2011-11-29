@@ -184,20 +184,29 @@ public class TailableCursorImpl extends TailableCursor {
 
             if (!_mongo.getDB(_options.getDatabaseName()).collectionExists(_options.getCollectionName())) {
                 if (_options.getAssertIfNoCappedCollection()) {
-                    throw new TailableCursorException(  "Not a capped collection - db: "
+                    throw new TailableCursorException(  "No capped collection found - db: "
                                                         + _options.getDatabaseName()
                                                         + " - collection: "
-                                                        + _options.getCollectionName());
+                                                        + _options.getCollectionName()
+                                                        + " (" + TailableCursorException.NO_COLLECTION_FOUND + ")",
+                                                        TailableCursorException.NO_COLLECTION_FOUND);
                 }
-
-
 
                 final BasicDBObject options = new BasicDBObject("capped", true);
                 options.put("size", _options.getDefaultCappedCollectionSize());
                 _mongo.getDB(_options.getDatabaseName()).createCollection(_options.getCollectionName(), options);
+            } else {
+                // Verify the collection is capped.
+                if (!_mongo.getDB(_options.getDatabaseName()).getCollection(_options.getCollectionName()).isCapped()) {
+                    throw new TailableCursorException(  "Not a capped collection - db: "
+                                                        + _options.getDatabaseName()
+                                                        + " - collection: "
+                                                        + _options.getCollectionName()
+                                                        + " (" + TailableCursorException.NON_CAPPED_COLLECTION + ")",
+                                                        TailableCursorException.NON_CAPPED_COLLECTION);
+                }
             }
 
-            // TODO: Verify the collection is capped
 
             _cursorReader = new CursorReader();
 
