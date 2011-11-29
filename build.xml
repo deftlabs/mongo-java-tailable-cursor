@@ -174,7 +174,7 @@ limitations under the License.
 
     <target name="test-thread" depends="compile">
 
-        <java classname="com.deftlabs.cursor.mongo.StandaloneTailableCursorTests">
+        <java classname="com.deftlabs.cursor.mongo.StandaloneTailableCursorTests" fork="true" failonerror="true">
             <arg value="-Duser.timezone=GMT"/>
             <arg value="-Dfile.encoding=UTF-8"/>
             <classpath refid="classpath.all"/>
@@ -183,7 +183,6 @@ limitations under the License.
                 <pathelement path="${dir.build.java}"/>
                 <pathelement path="${dir.conf}"/>
             </classpath>
-
         </java>
     </target>
 
