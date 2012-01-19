@@ -32,6 +32,10 @@ public class TailableCursorOptions {
     public void setInitialQuery(final DBObject pV) { _initialQuery = pV; }
     public DBObject getInitialQuery() { return _initialQuery; }
 
+    /**
+     * Set the no doc sleep time. This is called when there are no more docs in the oplog.
+     * The default is one second. Decreasing places extra queries on your collection.
+     */
     public void setNoDocSleepTime(final long pV) { _noDocSleepTime = pV; }
     public long getNoDocSleepTime() { return _noDocSleepTime; }
 
@@ -40,6 +44,10 @@ public class TailableCursorOptions {
 
     public String getMongoUri() { return _mongoUri; }
 
+    /**
+     * Set the assert if no capped collection flag. The default is false. The default behavior
+     * is to create a new capped collection with the params specified.
+     */
     public void setAssertIfNoCappedCollection(final boolean pV) { _assertIfNoCappedCollection = pV; }
     public boolean getAssertIfNoCappedCollection() { return _assertIfNoCappedCollection; }
 
@@ -47,7 +55,7 @@ public class TailableCursorOptions {
 
     /**
      * If the capped collection does not exist and assertIfNoCappedCollection == false,
-     * then a new capped collection will be created with this size. The defalt behavior
+     * then a new capped collection will be created with this size. The default behavior
      * of this library is to create a capped collection if one does not exist.
      */
     public long getDefaultCappedCollectionSize() { return _defaultCappedCollectionSize; }
@@ -62,7 +70,7 @@ public class TailableCursorOptions {
 
     private TailableCursorErrorListener _errorListener;
     private DBObject _initialQuery = new BasicDBObject();
-    private long _noDocSleepTime = 100; // time in ms
+    private long _noDocSleepTime = 1000; // time in ms
     private long _errorSleepTime = 1000; // time in ms
 
     private long _defaultCappedCollectionSize = 209715200l; // size in bytes
