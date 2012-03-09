@@ -23,7 +23,7 @@ import com.mongodb.DBObject;
 import java.util.EventListener;
 
 /**
- * The tailable cursor errro listener interface. This can be passed to the
+ * The tailable cursor error listener interface. This can be passed to the
  * options object if you want to handle errors.
  */
 public interface TailableCursorErrorListener extends EventListener {
