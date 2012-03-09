@@ -16,9 +16,6 @@
 
 package com.deftlabs.cursor.mongo;
 
-// Mongo
-import com.mongodb.DBObject;
-
 // Java
 import java.util.EventListener;
 
