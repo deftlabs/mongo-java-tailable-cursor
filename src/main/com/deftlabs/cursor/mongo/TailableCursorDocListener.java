@@ -24,7 +24,7 @@ import java.util.EventListener;
 
 /**
  * The tailable cursor doc listener interface. Used for the
- * event base notification model.
+ * event based notification model.
  */
 public interface TailableCursorDocListener extends EventListener {
 
