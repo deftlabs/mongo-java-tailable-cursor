@@ -151,12 +151,23 @@ public class TailableCursorImpl extends TailableCursor {
             return col.find(_options.getInitialQuery()).sort(new BasicDBObject("$natural", 1)).addOption(Bytes.QUERYOPTION_TAILABLE).addOption(Bytes.QUERYOPTION_AWAITDATA);
         }
 
+        /**
+         * Either log the exception or pass to the handler.
+         * @param pT The throwable received.
+         * @return  True if the thread should exit. False otherwise :-)
+         */
         private boolean handleException(final Throwable pT) {
+
+            if (pT instanceof InterruptedException) return true;
+
             if (_options.hasErrorListener()) {
                 try {
                     // Call the error listener.
                     _options.getErrorListener().onError(pT);
-                } catch (final Throwable t) { _logger.log(Level.SEVERE, pT.getMessage(), pT); }
+                } catch (final Throwable t) {
+                    if (t instanceof InterruptedException) return true;
+                    _logger.log(Level.SEVERE, pT.getMessage(), pT);
+                }
             } else { _logger.log(Level.SEVERE, pT.getMessage(), pT); }
 
             if (_options.getErrorSleepTime() <= 0) return false;
