@@ -15,6 +15,11 @@ Usage
 * [Javadocs](http://api.deftlabs.com/mongo-java-tailable-cursor)
 * [Getting Started](https://github.com/deftlabs/mongo-java-tailable-cursor/wiki/Getting-Started)
 
+Build
+------------
+
+[![Build Status](https://secure.travis-ci.org/deftlabs/mongo-java-tailable-cursor.png)](http://travis-ci.org/deftlabs/mongo-java-tailable-cursor)
+
 License
 ------------
 
